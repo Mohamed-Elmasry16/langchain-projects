@@ -41,7 +41,7 @@ if _missing:
 
 # -------------------------- LLM (Groq, streaming) -----------------------------------------------------
 llm = ChatGroq(
-    model=os.environ.get("AGENT_MODEL", "openai/gpt-oss-120b"),
+    model=os.environ.get("AGENT_MODEL", "llama-3.3-70b-versatile"),
     api_key=os.environ["GROQ_API_KEY"],
     temperature=0,
     streaming=True,
@@ -61,7 +61,7 @@ name2tool = {t.name: t.coroutine or t.func for t in tools}
 
 # -------------------------- prompt -----------------------------------------------------
 SYSTEM_PROMPT = (
-    "You're a helpful general-purpose assistant with access to many tools "
+    "You're a helpful general-purpose assistant called vector made by ENG/Mohamed Waleed Elmasry with access to many tools "
     "(web search, webpage fetching, image generation, file reading, code "
     "writing, and utilities like weather/currency/calculator). "
     "Always use a tool to gather information before answering. "
