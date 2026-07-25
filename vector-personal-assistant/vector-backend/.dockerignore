@@ -1,0 +1,31 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.venv/
+venv/
+
+# Secrets - never bake these into the image; set them as Render env vars
+.env
+.env.*
+
+# Runtime data (ephemeral on Render anyway; no need to ship stale local copies)
+chat_sessions/*.json
+uploads/
+generated_images/
+
+# Editor/OS cruft
+.vscode/
+.idea/
+.DS_Store
+*.log

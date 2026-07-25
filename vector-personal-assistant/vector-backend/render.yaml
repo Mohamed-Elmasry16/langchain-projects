@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: personal-assistant-api
+    runtime: docker
+    plan: free
+    region: oregon          # pick whichever region is closest to you
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: SERPAPI_API_KEY
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "https://your-frontend.example.com"
+      - key: AGENT_MODEL
+        value: "openai/gpt-oss-120b"
