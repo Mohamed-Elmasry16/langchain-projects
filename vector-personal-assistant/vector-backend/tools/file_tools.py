@@ -1,4 +1,3 @@
-import base64
 import io
 import re
 import httpx
@@ -30,11 +29,12 @@ class ToolResponse(BaseModel):
     error: str | None = None
 # -------------------------- PDF reader (with OCR fallback) -----------------------------------------------------
 @tool
-async def read_pdf(file_base64: str, lang: str = "eng+ara") -> ToolResponse:
-    """Extract text from a PDF file given as a base64 string.
+async def read_pdf(file_path: str, lang: str = "eng+ara") -> ToolResponse:
+    """Extract text from a PDF file on disk, given its absolute path (as returned by the /upload endpoint).
     Falls back to OCR automatically if the PDF is scanned (no selectable text)."""
     try:
-        file_bytes = base64.b64decode(file_base64)
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
         reader = pypdf.PdfReader(io.BytesIO(file_bytes))
         text = "\n".join(page.extract_text() or "" for page in reader.pages)
 
@@ -49,10 +49,11 @@ async def read_pdf(file_base64: str, lang: str = "eng+ara") -> ToolResponse:
 
 # -------------------------- DOCX reader -----------------------------------------------------
 @tool
-async def read_docx(file_base64: str) -> ToolResponse:
-    """Extract text from a Word (.docx) file given as a base64 string."""
+async def read_docx(file_path: str) -> ToolResponse:
+    """Extract text from a Word (.docx) file on disk, given its absolute path (as returned by the /upload endpoint)."""
     try:
-        file_bytes = base64.b64decode(file_base64)
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
         document = docx.Document(io.BytesIO(file_bytes))
         text = "\n".join(p.text for p in document.paragraphs)
         return ToolResponse(success=True, data=text[:8000])
@@ -62,10 +63,11 @@ async def read_docx(file_base64: str) -> ToolResponse:
 
 # -------------------------- CSV reader -----------------------------------------------------
 @tool
-async def read_csv(file_base64: str) -> ToolResponse:
-    """Read a CSV file given as a base64 string and return a summary (columns, row count, first rows)."""
+async def read_csv(file_path: str) -> ToolResponse:
+    """Read a CSV file on disk, given its absolute path (as returned by the /upload endpoint). Returns a summary (columns, row count, first rows)."""
     try:
-        file_bytes = base64.b64decode(file_base64)
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
         df = pd.read_csv(io.BytesIO(file_bytes))
         summary = {
             "columns": list(df.columns),
@@ -79,10 +81,11 @@ async def read_csv(file_base64: str) -> ToolResponse:
 
 # -------------------------- Excel reader (all sheets) -----------------------------------------------------
 @tool
-async def read_excel(file_base64: str) -> ToolResponse:
-    """Read an Excel (.xlsx) file given as a base64 string. Returns all sheet names and a preview of each."""
+async def read_excel(file_path: str) -> ToolResponse:
+    """Read an Excel (.xlsx) file on disk, given its absolute path (as returned by the /upload endpoint). Returns all sheet names and a preview of each."""
     try:
-        file_bytes = base64.b64decode(file_base64)
+        with open(file_path, "rb") as f:
+            file_bytes = f.read()
         excel_file = pd.ExcelFile(io.BytesIO(file_bytes))
 
         sheets_summary = {}
@@ -104,21 +107,22 @@ async def read_excel(file_base64: str) -> ToolResponse:
 
 # -------------------------- unified file reader -----------------------------------------------------
 @tool
-async def read_file(file_base64: str, filename: str) -> ToolResponse:
-    """Read a file (PDF, DOCX, XLSX, CSV, or TXT) given as base64 and its filename (used to detect the type)."""
-    extension = filename.lower().split(".")[-1]
+async def read_file(file_path: str) -> ToolResponse:
+    """Read a file (PDF, DOCX, XLSX, CSV, or TXT) on disk, given its absolute path (as returned by the /upload endpoint). File type is detected from the extension."""
+    extension = file_path.lower().split(".")[-1]
 
     if extension == "pdf":
-        return await read_pdf.ainvoke({"file_base64": file_base64})
+        return await read_pdf.ainvoke({"file_path": file_path})
     elif extension == "docx":
-        return await read_docx.ainvoke({"file_base64": file_base64})
+        return await read_docx.ainvoke({"file_path": file_path})
     elif extension in ("xlsx", "xls"):
-        return await read_excel.ainvoke({"file_base64": file_base64})
+        return await read_excel.ainvoke({"file_path": file_path})
     elif extension == "csv":
-        return await read_csv.ainvoke({"file_base64": file_base64})
+        return await read_csv.ainvoke({"file_path": file_path})
     elif extension == "txt":
         try:
-            text = base64.b64decode(file_base64).decode("utf-8", errors="ignore")
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                text = f.read()
             return ToolResponse(success=True, data=text[:8000])
         except Exception as e:
             return ToolResponse(success=False, error=str(e))
@@ -128,12 +132,11 @@ async def read_file(file_base64: str, filename: str) -> ToolResponse:
 
 # -------------------------- OCR (with language support) -----------------------------------------------------
 @tool
-async def ocr_image(image_base64: str, lang: str = "eng+ara") -> ToolResponse:
-    """Extract text from an image given as a base64 string (OCR).
+async def ocr_image(image_path: str, lang: str = "eng+ara") -> ToolResponse:
+    """Extract text from an image on disk (OCR), given its absolute path (as returned by the /upload endpoint).
     lang examples: 'eng', 'ara', 'eng+ara' for both languages."""
     try:
-        image_bytes = base64.b64decode(image_base64)
-        image = Image.open(io.BytesIO(image_bytes))
+        image = Image.open(image_path)
         text = pytesseract.image_to_string(image, lang=lang)
         return ToolResponse(success=True, data=text.strip())
     except Exception as e:
