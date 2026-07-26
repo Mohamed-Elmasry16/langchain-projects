@@ -47,7 +47,7 @@ llm = ChatNVIDIA(
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
-    model="google/gemma-4-26b-a4b-it:free",
+    model="openai/gpt-oss-20b:free",
     base_url="https://openrouter.ai/api/v1",
     api_key=os.environ["OPENROUTER_API_KEY"],
     temperature=0,
