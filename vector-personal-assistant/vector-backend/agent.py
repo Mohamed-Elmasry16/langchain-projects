@@ -36,7 +36,7 @@ from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 
 llm = ChatNVIDIA(
-  model="nvidia/llama-3.3-nemotron-super-49b-v1.5",
+  model="nvidia/nemotron-3-super-120b-a12b",
   api_key=os.environ["NIVDIA_API_KEY"], 
   temperature=1,
   top_p=0.95,
@@ -182,7 +182,7 @@ class CustomAgentExecutor:
                 "agent_scratchpad": lambda x: x.get("agent_scratchpad", []),
             }
             | prompt
-            | llm.bind_tools(tools, tool_choice="any")
+            | llm.bind_tools(tools, tool_choice="auto")
         )
 
     async def stream(self, user_input: str, streamer: QueueCallbackHandler) -> AsyncIterator[dict]:
