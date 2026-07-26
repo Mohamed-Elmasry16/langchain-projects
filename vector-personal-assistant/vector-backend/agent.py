@@ -36,10 +36,10 @@ from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 
 llm = ChatNVIDIA(
-  model="nvidia/nemotron-3-super-120b-a12b",
+  model="nvidia/nemotron-3-ultra-550b-a55b",
   api_key=os.environ["NIVDIA_API_KEY"], 
-  temperature=1,
-  top_p=0.95,
+  temperature=0,
+  top_p=1,
   max_tokens=16384,
   reasoning_budget=16384,
   chat_template_kwargs={"enable_thinking":True},
