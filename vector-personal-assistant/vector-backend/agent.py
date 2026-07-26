@@ -32,7 +32,7 @@ logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
 
 # -------------------------- LLM (Groq, streaming) -----------------------------------------------------
-from langchain_nvidia_ai_endpoints import ChatNVIDIA
+"""from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 
 llm = ChatNVIDIA(
@@ -42,6 +42,15 @@ llm = ChatNVIDIA(
   max_tokens=16384,
   reasoning_budget=16384,
   chat_template_kwargs={"enable_thinking":True},
+)"""
+
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(
+    model="openrouter/free",
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.environ["OPENROUTER_API_KEY"],
+    temperature=0,
 )
 
 
