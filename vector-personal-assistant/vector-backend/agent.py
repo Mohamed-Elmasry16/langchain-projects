@@ -36,7 +36,7 @@ from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 
 llm = ChatNVIDIA(
-  model="nvidia/nemotron-3-super-120b-a12b",
+  model="z-ai/glm-5.2",
   api_key=os.environ["NIVDIA_API_KEY"], 
   temperature=0,
   max_tokens=16384,
