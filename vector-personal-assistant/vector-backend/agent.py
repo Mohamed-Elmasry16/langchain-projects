@@ -47,7 +47,7 @@ llm = ChatNVIDIA(
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
-    model="nvidia/nemotron-3-ultra-550b-a55b:free",
+    model="nvidia/nemotron-3-super-120b-a12b:free",
     base_url="https://openrouter.ai/api/v1",
     api_key=os.environ["OPENROUTER_API_KEY"],
     temperature=0,
@@ -190,7 +190,7 @@ class CustomAgentExecutor:
                 "agent_scratchpad": lambda x: x.get("agent_scratchpad", []),
             }
             | prompt
-            | llm.bind_tools(tools, tool_choice="any")
+            | llm.bind_tools(tools, tool_choice="auto")
         )
 
     async def stream(self, user_input: str, streamer: QueueCallbackHandler) -> AsyncIterator[dict]:
