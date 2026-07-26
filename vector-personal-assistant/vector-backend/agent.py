@@ -29,14 +29,6 @@ logger = logging.getLogger("agent")
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
 
-# -------------------------- required environment -----------------------------------------------------
-REQUIRED_ENV_VARS = ["GROQ_API_KEY"]
-_missing = [v for v in REQUIRED_ENV_VARS if not os.environ.get(v)]
-if _missing:
-    raise RuntimeError(
-        f"Missing required environment variable(s): {', '.join(_missing)}. "
-        "Set them in your .env file before starting the agent."
-    )
 
 
 # -------------------------- LLM (Groq, streaming) -----------------------------------------------------
@@ -45,7 +37,7 @@ from langchain_nvidia_ai_endpoints import ChatNVIDIA
 
 llm = ChatNVIDIA(
   model="nvidia/nemotron-3-ultra-550b-a55b",
-  api_key=api_key=os.environ["NIVDIA_API_KEY"], 
+  api_key=os.environ["NIVDIA_API_KEY"], 
   temperature=1,
   top_p=0.95,
   max_tokens=16384,
