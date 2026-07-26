@@ -41,7 +41,7 @@ if _missing:
 
 # -------------------------- LLM (Groq, streaming) -----------------------------------------------------
 llm = ChatGroq(
-    model=os.environ.get("AGENT_MODEL", "qwen/qwen3.6-27b"),
+    model=os.environ.get("AGENT_MODEL", "openai/gpt-oss-20b"),
     api_key=os.environ["GROQ_API_KEY"],
     temperature=0,
     streaming=True,
