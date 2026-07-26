@@ -20,3 +20,5 @@ pytesseract==0.3.13
 Pillow==11.0.0
 pdf2image==1.17.0
 youtube-transcript-api==0.6.3
+
+langchain_nvidia_ai_endpoints
