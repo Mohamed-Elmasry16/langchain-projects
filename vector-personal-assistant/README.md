@@ -139,4 +139,4 @@ Built by **Mohamed Waleed Elmasry** — [GitHub](https://github.com/Mohamed-Elma
 
 ## 📄 License
 
-MIT — see [LICENSE](./LICENSE) *(add a LICENSE file if you want this to be enforceable)*
+MIT — see [LICENSE](./LICENSE)
