@@ -10,7 +10,7 @@ from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMe
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.base import RunnableSerializable
 from langchain_core.callbacks.base import AsyncCallbackHandler
-from langchain_groq import ChatGroq
+
 
 from tools.basic_tools import (
     generate_image, serpapi, write_code, fetch_webpage, calculator,
@@ -40,12 +40,19 @@ if _missing:
 
 
 # -------------------------- LLM (Groq, streaming) -----------------------------------------------------
-llm = ChatGroq(
-    model=os.environ.get("AGENT_MODEL", "openai/gpt-oss-20b"),
-    api_key=os.environ["GROQ_API_KEY"],
-    temperature=0,
-    streaming=True,
+from langchain_nvidia_ai_endpoints import ChatNVIDIA
+
+
+llm = ChatNVIDIA(
+  model="nvidia/nemotron-3-ultra-550b-a55b",
+  api_key=api_key=os.environ["NIVDIA_API_KEY"], 
+  temperature=1,
+  top_p=0.95,
+  max_tokens=16384,
+  reasoning_budget=16384,
+  chat_template_kwargs={"enable_thinking":True},
 )
+
 
 # -------------------------- tools -----------------------------------------------------
 tools = [
