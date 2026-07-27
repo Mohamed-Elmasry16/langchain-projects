@@ -64,11 +64,8 @@ llm = ChatGroq(
 
 # -------------------------- tools -----------------------------------------------------
 tools = [
-    generate_image, serpapi, write_code, fetch_webpage, calculator,
-    get_current_datetime, wikipedia_search, currency_converter, weather,
-    unit_converter, uuid_generator,
-    read_pdf, read_docx, read_csv, read_excel, read_file, ocr_image,
-    summarize_text, youtube_transcript, youtube_search]
+    generate_image,
+    get_current_datetime, wikipedia_search, currency_converter, weather, youtube_search]
 name2tool = {t.name: t.coroutine or t.func for t in tools}
 
 
