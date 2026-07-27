@@ -44,14 +44,15 @@ llm = ChatNVIDIA(
   chat_template_kwargs={"enable_thinking":True},
 )"""
 
-"""from langchain_openai import ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
-    model="openai/gpt-oss-20b:free",
+    model="openrouter/free",
     base_url="https://openrouter.ai/api/v1",
     api_key=os.environ["OPENROUTER_API_KEY"],
     temperature=0,
-)"""
+)
+"""
 from langchain_groq import ChatGroq
 
 llm = ChatGroq(
@@ -59,13 +60,18 @@ llm = ChatGroq(
     api_key=os.environ["GROQ_API_KEY2"],
     temperature=0,
     streaming=True,
-)
+)"""
 
 
 # -------------------------- tools -----------------------------------------------------
 tools = [
-    generate_image,
-    get_current_datetime, wikipedia_search, currency_converter, weather, youtube_search]
+    generate_image, serpapi, write_code, fetch_webpage, calculator,
+    get_current_datetime, wikipedia_search, currency_converter, weather,
+    unit_converter, uuid_generator,
+    read_pdf, read_docx, read_csv, read_excel, read_file, ocr_image,
+    summarize_text, youtube_transcript, youtube_search,
+    final_answer,
+]
 name2tool = {t.name: t.coroutine or t.func for t in tools}
 
 
@@ -75,7 +81,7 @@ SYSTEM_PROMPT = (
     "(web search, webpage fetching, image generation, file reading, code "
     "writing, and utilities like weather/currency/calculator). "
     "Always use a tool to gather information before answering. "
-    "Once you have what you need, structure the answer to give  to the user  "
+    "Once you have what you need, you MUST call the final_answer tool to "
     "reply to the user in natural language. Do not call the same tool "
     "more than once unless the result clearly failed. "
     "IMPORTANT: When a tool like generate_image returns an image, do NOT "
@@ -193,7 +199,7 @@ class CustomAgentExecutor:
                 "agent_scratchpad": lambda x: x.get("agent_scratchpad", []),
             }
             | prompt
-            | llm.bind_tools(tools, tool_choice="auto")
+            | llm.bind_tools(tools, tool_choice="any")
         )
 
     async def stream(self, user_input: str, streamer: QueueCallbackHandler) -> AsyncIterator[dict]:
