@@ -44,13 +44,21 @@ llm = ChatNVIDIA(
   chat_template_kwargs={"enable_thinking":True},
 )"""
 
-from langchain_openai import ChatOpenAI
+"""from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
     model="openai/gpt-oss-20b:free",
     base_url="https://openrouter.ai/api/v1",
     api_key=os.environ["OPENROUTER_API_KEY"],
     temperature=0,
+)"""
+from langchain_groq import ChatGroq
+
+llm = ChatGroq(
+    model=os.environ.get("AGENT_MODEL", "openai/gpt-oss-120b"),
+    api_key=os.environ["GROQ_API_KEY"],
+    temperature=0,
+    streaming=True,
 )
 
 
@@ -190,7 +198,7 @@ class CustomAgentExecutor:
                 "agent_scratchpad": lambda x: x.get("agent_scratchpad", []),
             }
             | prompt
-            | llm.bind_tools(tools, tool_choice="any")
+            | llm.bind_tools(tools, tool_choice="auto")
         )
 
     async def stream(self, user_input: str, streamer: QueueCallbackHandler) -> AsyncIterator[dict]:
