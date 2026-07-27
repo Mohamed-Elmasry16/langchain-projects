@@ -68,9 +68,7 @@ tools = [
     get_current_datetime, wikipedia_search, currency_converter, weather,
     unit_converter, uuid_generator,
     read_pdf, read_docx, read_csv, read_excel, read_file, ocr_image,
-    summarize_text, youtube_transcript, youtube_search,
-    final_answer,
-]
+    summarize_text, youtube_transcript, youtube_search]
 name2tool = {t.name: t.coroutine or t.func for t in tools}
 
 
@@ -80,7 +78,7 @@ SYSTEM_PROMPT = (
     "(web search, webpage fetching, image generation, file reading, code "
     "writing, and utilities like weather/currency/calculator). "
     "Always use a tool to gather information before answering. "
-    "Once you have what you need, you MUST call the final_answer tool to "
+    "Once you have what you need, structure the answer to give  to the user  "
     "reply to the user in natural language. Do not call the same tool "
     "more than once unless the result clearly failed. "
     "IMPORTANT: When a tool like generate_image returns an image, do NOT "
@@ -198,7 +196,7 @@ class CustomAgentExecutor:
                 "agent_scratchpad": lambda x: x.get("agent_scratchpad", []),
             }
             | prompt
-            | llm.bind_tools(tools, tool_choice="any")
+            | llm.bind_tools(tools, tool_choice="auto")
         )
 
     async def stream(self, user_input: str, streamer: QueueCallbackHandler) -> AsyncIterator[dict]:
